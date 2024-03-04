@@ -1,0 +1,12 @@
+{
+  "name": "nextjs-image-optimization-loader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/kwonhygge/nextjs-image-optimization-loader.git",
+  "author": "kwonhygge <cleancode.kwon@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "image-size": "^1.1.1",
+    "sharp": "^0.33.2"
+  }
+}
