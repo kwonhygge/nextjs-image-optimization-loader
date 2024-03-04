@@ -2,12 +2,20 @@
   "name": "nextjs-image-optimization-loader",
   "version": "1.0.1",
   "description": "custom image loader for optimization without nextjs server",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/kwonhygge/nextjs-image-optimization-loader.git",
   "author": "kwonhygge <cleancode.kwon@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "babel lib --out-dir dist"
+  },
   "dependencies": {
     "image-size": "^1.1.1",
     "sharp": "^0.33.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0"
   }
 }
