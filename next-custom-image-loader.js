@@ -1,4 +1,4 @@
-import RESULT from './result.json';
+const RESULT = require('./result.json');
 
 const SCREEN_BREAK_POINT = {
     sm: 640,
