@@ -127,7 +127,7 @@ var processImage = /*#__PURE__*/function () {
   };
 }();
 module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-  var callback, filePath, file, fileName, imageInfo, resultJsonFile;
+  var callback, filePath, file, fileName, imageInfo, resultJsonFile, isSimplyUsedInManyPlaces;
   return _regeneratorRuntime().wrap(function _callee4$(_context4) {
     while (1) switch (_context4.prev = _context4.next) {
       case 0:
@@ -143,24 +143,34 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
         } else {
           fs.writeFileSync(resultFilePath, JSON.stringify({}));
         }
-        if (imageInfo[fileName] && imageInfo[fileName].original !== filePath) {
+        if (!imageInfo[fileName]) {
+          _context4.next = 12;
+          break;
+        }
+        isSimplyUsedInManyPlaces = imageInfo[fileName].original === filePath;
+        if (isSimplyUsedInManyPlaces) {
+          callback(null, file);
+        } else {
           console.error("Error: Image with name ".concat(fileName, " already exists in result.js  \n"), "duplicated path: ".concat(filePath, " and ").concat(imageInfo[fileName].original));
           process.exit(1);
         }
-        _context4.next = 10;
-        return processImage(file, fileName, imageInfo, filePath);
-      case 10:
-        saveResultToFile(imageInfo);
-        callback(null, file);
-        _context4.next = 17;
+        _context4.next = 15;
         break;
+      case 12:
+        _context4.next = 14;
+        return processImage(file, fileName, imageInfo, filePath);
       case 14:
-        _context4.prev = 14;
+        saveResultToFile(imageInfo);
+      case 15:
+        _context4.next = 20;
+        break;
+      case 17:
+        _context4.prev = 17;
         _context4.t0 = _context4["catch"](4);
         callback(_context4.t0);
-      case 17:
+      case 20:
       case "end":
         return _context4.stop();
     }
-  }, _callee4, this, [[4, 14]]);
+  }, _callee4, this, [[4, 17]]);
 }));
