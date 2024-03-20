@@ -154,23 +154,24 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
           console.error("Error: Image with name ".concat(fileName, " already exists in result.js  \n"), "duplicated path: ".concat(filePath, " and ").concat(imageInfo[fileName].original));
           process.exit(1);
         }
-        _context4.next = 15;
+        _context4.next = 16;
         break;
       case 12:
         _context4.next = 14;
         return processImage(file, fileName, imageInfo, filePath);
       case 14:
         saveResultToFile(imageInfo);
-      case 15:
-        _context4.next = 20;
+        callback(null, file);
+      case 16:
+        _context4.next = 21;
         break;
-      case 17:
-        _context4.prev = 17;
+      case 18:
+        _context4.prev = 18;
         _context4.t0 = _context4["catch"](4);
         callback(_context4.t0);
-      case 20:
+      case 21:
       case "end":
         return _context4.stop();
     }
-  }, _callee4, this, [[4, 17]]);
+  }, _callee4, this, [[4, 18]]);
 }));
