@@ -1,6 +1,3 @@
 "use strict";
 
-var webpackImageOptimizationLoader = require('./webpack-image-optimization-loader');
-module.exports = {
-  webpackImageOptimizationLoader: webpackImageOptimizationLoader
-};
+module.exports = require('./webpack-image-optimization-loader');
