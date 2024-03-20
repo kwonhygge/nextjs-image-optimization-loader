@@ -1,6 +1,6 @@
 {
   "name": "nextjs-image-optimization-loader",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "custom image loader for optimization without nextjs server",
   "main": "dist/index.js",
   "repository": "https://github.com/kwonhygge/nextjs-image-optimization-loader.git",
