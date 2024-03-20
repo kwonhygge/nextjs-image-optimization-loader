@@ -26,7 +26,7 @@ var SCREEN_BREAK_POINT = {
   xl: 1280
 };
 var resultFolderPath = path.join(process.cwd(), 'public', 'optimized');
-var resultFilePath = path.join(__dirname, 'result.json');
+var resultFilePath = path.join(process.cwd(), 'result.json');
 var createResizedFolderIfNotExists = function createResizedFolderIfNotExists() {
   if (!fs.existsSync(resultFolderPath)) {
     fs.mkdirSync(resultFolderPath);
