@@ -127,15 +127,16 @@ var processImage = /*#__PURE__*/function () {
   };
 }();
 module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-  var callback, filePath, file, fileName, imageInfo, resultJsonFile, isSimplyUsedInManyPlaces;
+  var options, callback, filePath, file, fileName, imageInfo, resultJsonFile, isDuplicatedName;
   return _regeneratorRuntime().wrap(function _callee4$(_context4) {
     while (1) switch (_context4.prev = _context4.next) {
       case 0:
+        options = this.getOptions();
         callback = this.async();
         filePath = path.join('/', path.relative("".concat(process.cwd(), "/public"), this.resourcePath));
         file = fs.readFileSync(this.resourcePath);
         fileName = path.basename(filePath, path.extname(filePath));
-        _context4.prev = 4;
+        _context4.prev = 5;
         imageInfo = {};
         if (fs.existsSync(resultFilePath)) {
           resultJsonFile = fs.readFileSync(resultFilePath);
@@ -144,34 +145,40 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
           fs.writeFileSync(resultFilePath, JSON.stringify({}));
         }
         if (!imageInfo[fileName]) {
-          _context4.next = 12;
+          _context4.next = 13;
           break;
         }
-        isSimplyUsedInManyPlaces = imageInfo[fileName].original === filePath;
-        if (isSimplyUsedInManyPlaces) {
-          callback(null, file);
-        } else {
-          console.error("Error: Image with name ".concat(fileName, " already exists in result.js  \n"), "duplicated path: ".concat(filePath, " and ").concat(imageInfo[fileName].original));
+        isDuplicatedName = imageInfo[fileName].original !== filePath;
+        if (isDuplicatedName) {
+          console.error("Error: Image with name ".concat(fileName, " already exists in result.json  \n"), "duplicated path: ".concat(filePath, " and ").concat(imageInfo[fileName].original));
           process.exit(1);
+        } else {
+          callback(null, file);
         }
-        _context4.next = 16;
+        _context4.next = 19;
         break;
-      case 12:
-        _context4.next = 14;
+      case 13:
+        if (!options.validationOnly) {
+          _context4.next = 15;
+          break;
+        }
+        return _context4.abrupt("return", callback(null, file));
+      case 15:
+        _context4.next = 17;
         return processImage(file, fileName, imageInfo, filePath);
-      case 14:
+      case 17:
         saveResultToFile(imageInfo);
         callback(null, file);
-      case 16:
-        _context4.next = 21;
+      case 19:
+        _context4.next = 24;
         break;
-      case 18:
-        _context4.prev = 18;
-        _context4.t0 = _context4["catch"](4);
-        callback(_context4.t0);
       case 21:
+        _context4.prev = 21;
+        _context4.t0 = _context4["catch"](5);
+        callback(_context4.t0);
+      case 24:
       case "end":
         return _context4.stop();
     }
-  }, _callee4, this, [[4, 18]]);
+  }, _callee4, this, [[5, 21]]);
 }));

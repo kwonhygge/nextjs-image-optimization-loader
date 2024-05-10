@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-image-optimization-loader",
+  "name": "image-optimization-loader",
   "version": "1.0.9",
   "description": "custom image loader for optimization without nextjs server",
   "main": "dist/index.js",
