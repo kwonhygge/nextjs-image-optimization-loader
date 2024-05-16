@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-image-optimization-loader",
+  "name": "image-optimization-loader",
   "version": "1.0.11",
   "description": "custom image loader for optimization without nextjs server",
   "main": "dist/index.js",
@@ -10,12 +10,15 @@
     "build": "babel lib --out-dir dist"
   },
   "dependencies": {
+    "@types/node": "^20.12.11",
     "image-size": "^1.1.1",
-    "sharp": "^0.33.2"
+    "sharp": "^0.33.2",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.24.0",
-    "@babel/preset-env": "^7.24.0"
+    "@babel/preset-env": "^7.24.0",
+    "prettier": "^3.2.5"
   }
 }
