@@ -1,17 +1,9 @@
 import fs from "fs";
 import path from "path";
+import { ImageInfo, Options, ProcessImageOptions } from "../types/common";
 import { processImage } from "./utils/processImage";
 import { saveResultToFile } from "./utils/saveResultToFile";
-import { ImageInfo, ProcessImageOptions } from "./types/common";
-
-type Options = {
-  validationOnly?: boolean;
-  optimizedFolderName?: string;
-  resultFileName?: string;
-  screenBreakPoint?: {
-    [key: string]: number;
-  };
-};
+import { getFileName } from "../utils/file";
 
 const DEFAULT_SCREEN_BREAK_POINT = {
   sm: 640,
@@ -20,20 +12,21 @@ const DEFAULT_SCREEN_BREAK_POINT = {
   xl: 1280,
 };
 
-const DEFAULT_RESULT_FILE_NAME = "result.json";
-const DEFAULT_OPTIMIZED_FOLDER_NAME = "optimized";
+export const BUILD_TIME_LABEL = "이미지 로더 빌드 시간";
+export const DEFAULT_RESULT_FILE_NAME = "result.json";
+export const DEFAULT_OPTIMIZED_FOLDER_NAME = "optimized";
+
+const resultFilePath = path.join(process.cwd(), DEFAULT_RESULT_FILE_NAME);
+
+const optimizedFolderPath = path.join(
+  process.cwd(),
+  DEFAULT_OPTIMIZED_FOLDER_NAME,
+);
 
 module.exports = async function () {
+  console.log("-----------------이미지 로더 빌드 시작-------------------");
+  console.time(BUILD_TIME_LABEL);
   const options: Options = this.getOptions();
-
-  const resultFilePath = path.join(
-    process.cwd(),
-    options.resultFileName || DEFAULT_RESULT_FILE_NAME,
-  );
-  const optimizedFolderPath = path.join(
-    process.cwd(),
-    options.optimizedFolderName || DEFAULT_OPTIMIZED_FOLDER_NAME,
-  );
 
   const processImageOptions: ProcessImageOptions = {
     validationOnly: !!options.validationOnly,
@@ -44,13 +37,13 @@ module.exports = async function () {
 
   const callback = this.async();
 
-  const filePath = path.join(
+  const currentFilePath = path.join(
     "/",
     path.relative(`${process.cwd()}/public`, this.resourcePath),
   );
 
   const fileBuffer = fs.readFileSync(this.resourcePath);
-  const fileName = path.basename(filePath, path.extname(filePath));
+  const currentFileName = getFileName(currentFilePath);
 
   try {
     let imageInfo: ImageInfo = {};
@@ -62,29 +55,30 @@ module.exports = async function () {
       fs.writeFileSync(resultFilePath, JSON.stringify({}));
     }
 
-    if (imageInfo[fileName]) {
-      const isDuplicatedName = imageInfo[fileName].original !== filePath;
+    if (imageInfo[currentFileName]) {
+      const isDuplicatedName =
+        imageInfo[currentFileName].original !== currentFilePath;
 
       if (isDuplicatedName) {
         console.error(
-          `Error: Image with name ${fileName} already exists in result.json  \n`,
-          `duplicated path: ${filePath} and ${imageInfo[fileName].original}`,
+          `Error: Image with name ${currentFileName} already exists in ${DEFAULT_RESULT_FILE_NAME}  \n`,
+          `duplicated path: ${currentFilePath} and ${imageInfo[currentFileName].original}`,
         );
         process.exit(1);
       } else {
         callback(null, fileBuffer);
       }
     } else {
-      if (options.validationOnly) return callback(null, fileBuffer);
-
       await processImage(
         fileBuffer,
-        fileName,
         imageInfo,
-        filePath,
+        currentFilePath,
         processImageOptions,
       );
+
       saveResultToFile(imageInfo, resultFilePath);
+      console.timeEnd(BUILD_TIME_LABEL);
+
       callback(null, fileBuffer);
     }
   } catch (e) {

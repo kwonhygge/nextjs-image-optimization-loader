@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ImageInfo } from "../types/common";
+import { ImageInfo } from "../../types/common";
 
 export const saveResultToFile = (
   imageInfo: ImageInfo,

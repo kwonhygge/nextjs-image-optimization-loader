@@ -1,19 +1,20 @@
 import { createResizedFolderIfNotExists } from "./createSizeFolderIfNotExisits";
 import { updateImageInfo } from "./updateImageInfo";
-import { ImageInfo, ProcessImageOptions } from "../types/common";
+import { ImageInfo, ProcessImageOptions } from "../../types/common";
 import { optimizeOriginalImage } from "./optimizeOriginalImage";
 import path from "path";
 import sizeOf from "image-size";
 import sharp from "sharp";
+import { getFileName } from "../../utils/file";
 
 export const processImage = async (
   file: Buffer,
-  fileName: string,
   imageInfo: ImageInfo,
-  filePath: string,
+  currentFilePath: string,
   options: ProcessImageOptions,
 ) => {
   const fileSize = sizeOf(file);
+  const currentFileName = getFileName(currentFilePath);
 
   createResizedFolderIfNotExists(options.optimizedFolderPath);
 
@@ -24,25 +25,25 @@ export const processImage = async (
           const isResizingNeeded = breakpointWidth < fileSize.width;
 
           const fileSrc = isResizingNeeded
-            ? `${fileName}.${breakpoint}.webp`
-            : `${fileName}.webp`;
+            ? `${currentFileName}.${breakpoint}.webp`
+            : `${currentFileName}.webp`;
 
           updateImageInfo(
             imageInfo,
-            fileName,
+            currentFileName,
             breakpoint,
             path.join("/optimized", fileSrc),
           );
 
           return new Promise<void>((resolve) => {
-            if (isResizingNeeded) {
+            if (isResizingNeeded && !options.validationOnly) {
               sharp(file)
                 .resize(breakpointWidth)
                 .webp()
                 .toFile(
                   path.join(
                     options.optimizedFolderPath,
-                    `${fileName}.${breakpoint}.webp`,
+                    `${currentFileName}.${breakpoint}.webp`,
                   ),
                   (err) => {
                     if (err) {
@@ -61,13 +62,7 @@ export const processImage = async (
       ),
     );
 
-    await optimizeOriginalImage(
-      file,
-      imageInfo,
-      fileName,
-      filePath,
-      options.optimizedFolderPath,
-    );
+    await optimizeOriginalImage(file, imageInfo, currentFilePath, options);
   } catch (e) {
     console.log(e);
     throw e;

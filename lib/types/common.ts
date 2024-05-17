@@ -4,11 +4,14 @@ export type ImageInfo = {
   };
 };
 
-export type ProcessImageOptions = {
-  validationOnly: boolean;
-  screenBreakPoint: {
-    [key: string]: number;
-  };
+export type ProcessImageOptions = Options & {
   optimizedFolderPath: string;
   resultFilePath: string;
+};
+
+export type Options = {
+  validationOnly?: boolean;
+  screenBreakPoint?: {
+    [key: string]: number;
+  };
 };
