@@ -12,7 +12,6 @@ const DEFAULT_SCREEN_BREAK_POINT = {
   xl: 1280,
 };
 
-export const BUILD_TIME_LABEL = "이미지 로더 빌드 시간";
 export const DEFAULT_RESULT_FILE_NAME = "result.json";
 export const DEFAULT_OPTIMIZED_FOLDER_NAME = "optimized";
 
@@ -20,12 +19,11 @@ const resultFilePath = path.join(process.cwd(), DEFAULT_RESULT_FILE_NAME);
 
 const optimizedFolderPath = path.join(
   process.cwd(),
+  "public",
   DEFAULT_OPTIMIZED_FOLDER_NAME,
 );
 
 module.exports = async function () {
-  console.log("-----------------이미지 로더 빌드 시작-------------------");
-  console.time(BUILD_TIME_LABEL);
   const options: Options = this.getOptions();
 
   const processImageOptions: ProcessImageOptions = {
@@ -77,7 +75,6 @@ module.exports = async function () {
       );
 
       saveResultToFile(imageInfo, resultFilePath);
-      console.timeEnd(BUILD_TIME_LABEL);
 
       callback(null, fileBuffer);
     }
