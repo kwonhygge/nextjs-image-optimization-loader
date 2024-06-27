@@ -4,7 +4,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DEFAULT_RESULT_FILE_NAME = exports.DEFAULT_OPTIMIZED_FOLDER_NAME = exports.BUILD_TIME_LABEL = void 0;
+exports.DEFAULT_RESULT_FILE_NAME = exports.DEFAULT_OPTIMIZED_FOLDER_NAME = void 0;
 var _fs = _interopRequireDefault(require("fs"));
 var _path = _interopRequireDefault(require("path"));
 var _processImage = require("./utils/processImage");
@@ -20,18 +20,15 @@ var DEFAULT_SCREEN_BREAK_POINT = {
   lg: 1024,
   xl: 1280
 };
-var BUILD_TIME_LABEL = exports.BUILD_TIME_LABEL = "이미지 로더 빌드 시간";
 var DEFAULT_RESULT_FILE_NAME = exports.DEFAULT_RESULT_FILE_NAME = "result.json";
 var DEFAULT_OPTIMIZED_FOLDER_NAME = exports.DEFAULT_OPTIMIZED_FOLDER_NAME = "optimized";
 var resultFilePath = _path["default"].join(process.cwd(), DEFAULT_RESULT_FILE_NAME);
-var optimizedFolderPath = _path["default"].join(process.cwd(), DEFAULT_OPTIMIZED_FOLDER_NAME);
+var optimizedFolderPath = _path["default"].join(process.cwd(), "public", DEFAULT_OPTIMIZED_FOLDER_NAME);
 module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
   var options, processImageOptions, callback, currentFilePath, fileBuffer, currentFileName, imageInfo, resultJsonFile, isDuplicatedName;
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) switch (_context.prev = _context.next) {
       case 0:
-        console.log("-----------------이미지 로더 빌드 시작-------------------");
-        console.time(BUILD_TIME_LABEL);
         options = this.getOptions();
         processImageOptions = {
           validationOnly: !!options.validationOnly,
@@ -43,7 +40,7 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
         currentFilePath = _path["default"].join("/", _path["default"].relative("".concat(process.cwd(), "/public"), this.resourcePath));
         fileBuffer = _fs["default"].readFileSync(this.resourcePath);
         currentFileName = (0, _file.getFileName)(currentFilePath);
-        _context.prev = 8;
+        _context.prev = 6;
         imageInfo = {};
         if (_fs["default"].existsSync(resultFilePath)) {
           resultJsonFile = _fs["default"].readFileSync(resultFilePath);
@@ -52,7 +49,7 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
           _fs["default"].writeFileSync(resultFilePath, JSON.stringify({}));
         }
         if (!imageInfo[currentFileName]) {
-          _context.next = 16;
+          _context.next = 14;
           break;
         }
         isDuplicatedName = imageInfo[currentFileName].original !== currentFilePath;
@@ -62,25 +59,24 @@ module.exports = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntim
         } else {
           callback(null, fileBuffer);
         }
-        _context.next = 21;
-        break;
-      case 16:
         _context.next = 18;
-        return (0, _processImage.processImage)(fileBuffer, imageInfo, currentFilePath, processImageOptions);
-      case 18:
-        (0, _saveResultToFile.saveResultToFile)(imageInfo, resultFilePath);
-        console.timeEnd(BUILD_TIME_LABEL);
-        callback(null, fileBuffer);
-      case 21:
-        _context.next = 26;
         break;
-      case 23:
-        _context.prev = 23;
-        _context.t0 = _context["catch"](8);
+      case 14:
+        _context.next = 16;
+        return (0, _processImage.processImage)(fileBuffer, imageInfo, currentFilePath, processImageOptions);
+      case 16:
+        (0, _saveResultToFile.saveResultToFile)(imageInfo, resultFilePath);
+        callback(null, fileBuffer);
+      case 18:
+        _context.next = 23;
+        break;
+      case 20:
+        _context.prev = 20;
+        _context.t0 = _context["catch"](6);
         callback(_context.t0);
-      case 26:
+      case 23:
       case "end":
         return _context.stop();
     }
-  }, _callee, this, [[8, 23]]);
+  }, _callee, this, [[6, 20]]);
 }));
