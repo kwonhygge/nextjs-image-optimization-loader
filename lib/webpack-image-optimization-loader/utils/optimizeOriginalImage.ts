@@ -32,5 +32,7 @@ export const optimizeOriginalImage = async (
           }
         },
       );
+
+    console.log(`Optimized original image for ${fileName}`);
   }
 };

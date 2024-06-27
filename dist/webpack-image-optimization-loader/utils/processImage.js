@@ -50,6 +50,7 @@ var processImage = exports.processImage = /*#__PURE__*/function () {
                             console.log(err);
                             throw err;
                           } else {
+                            console.log("Resized image to ".concat(breakpointWidth, " for ").concat(currentFileName));
                             resolve();
                           }
                         });

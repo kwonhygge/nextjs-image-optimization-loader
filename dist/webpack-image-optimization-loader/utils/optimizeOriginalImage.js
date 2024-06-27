@@ -29,6 +29,7 @@ var optimizeOriginalImage = exports.optimizeOriginalImage = /*#__PURE__*/functio
                 throw err;
               }
             });
+            console.log("Optimized original image for ".concat(fileName));
           }
         case 4:
         case "end":

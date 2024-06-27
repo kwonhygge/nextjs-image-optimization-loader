@@ -50,6 +50,10 @@ export const processImage = async (
                       console.log(err);
                       throw err;
                     } else {
+                      console.log(
+                        `Resized image to ${breakpointWidth} for ${currentFileName}`,
+                      );
+
                       resolve();
                     }
                   },
