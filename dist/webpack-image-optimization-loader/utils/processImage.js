@@ -43,19 +43,20 @@ var processImage = exports.processImage = /*#__PURE__*/function () {
                     isResizingNeeded = breakpointWidth < fileSize.width;
                     fileSrc = isResizingNeeded ? "".concat(currentFileName, ".").concat(breakpoint, ".webp") : "".concat(currentFileName, ".webp");
                     (0, _updateImageInfo.updateImageInfo)(imageInfo, currentFileName, breakpoint, _path["default"].join("/optimized", fileSrc));
-                    return _context.abrupt("return", new Promise(function (resolve) {
+                    return _context.abrupt("return", new Promise(function (resolve, reject) {
                       if (isResizingNeeded && !options.validationOnly) {
                         (0, _sharp["default"])(file).resize(breakpointWidth).webp().toFile(_path["default"].join(options.optimizedFolderPath, "".concat(currentFileName, ".").concat(breakpoint, ".webp")), function (err) {
                           if (err) {
                             console.log(err);
-                            throw err;
+                            reject(err);
                           } else {
                             console.log("Resized image to ".concat(breakpointWidth, " for ").concat(currentFileName));
                             resolve();
                           }
                         });
+                      } else {
+                        resolve();
                       }
-                      resolve();
                     }));
                   case 5:
                   case "end":

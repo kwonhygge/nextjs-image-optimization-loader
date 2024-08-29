@@ -1,9 +1,10 @@
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import { ImageInfo, Options, ProcessImageOptions } from "../types/common";
 import { processImage } from "./utils/processImage";
 import { saveResultToFile } from "./utils/saveResultToFile";
 import { getFileName } from "../utils/file";
+import lockfile from "proper-lockfile";
 
 const DEFAULT_SCREEN_BREAK_POINT = {
   sm: 640,
@@ -23,7 +24,7 @@ const optimizedFolderPath = path.join(
   DEFAULT_OPTIMIZED_FOLDER_NAME,
 );
 
-module.exports = async function () {
+export default async function () {
   const options: Options = this.getOptions();
 
   const processImageOptions: ProcessImageOptions = {
@@ -40,45 +41,66 @@ module.exports = async function () {
     path.relative(`${process.cwd()}/public`, this.resourcePath),
   );
 
-  const fileBuffer = fs.readFileSync(this.resourcePath);
+  const fileBuffer = await fs.readFile(this.resourcePath);
   const currentFileName = getFileName(currentFilePath);
 
   try {
-    let imageInfo: ImageInfo = {};
-
-    if (fs.existsSync(resultFilePath)) {
-      const resultJsonFile = fs.readFileSync(resultFilePath);
-      imageInfo = JSON.parse(resultJsonFile.toString());
-    } else {
-      fs.writeFileSync(resultFilePath, JSON.stringify({}));
+    try {
+      await fs.access(resultFilePath);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        await fs.writeFile(resultFilePath, JSON.stringify({}));
+      } else {
+        throw error;
+      }
     }
 
-    if (imageInfo[currentFileName]) {
-      const isDuplicatedName =
-        imageInfo[currentFileName].original !== currentFilePath;
+    const release = await lockfile.lock(resultFilePath, {
+      retries: 5,
+    });
 
-      if (isDuplicatedName) {
-        console.error(
-          `Error: Image with name ${currentFileName} already exists in ${DEFAULT_RESULT_FILE_NAME}  \n`,
-          `duplicated path: ${currentFilePath} and ${imageInfo[currentFileName].original}`,
-        );
-        process.exit(1);
+    try {
+      let imageInfo: ImageInfo = {};
+
+      if (
+        await fs
+          .access(resultFilePath)
+          .then(() => true)
+          .catch(() => false)
+      ) {
+        const resultJsonFile = await fs.readFile(resultFilePath, "utf-8");
+        imageInfo = JSON.parse(resultJsonFile);
+      }
+
+      if (imageInfo[currentFileName]) {
+        const isDuplicatedName =
+          imageInfo[currentFileName].original !== currentFilePath;
+
+        if (isDuplicatedName) {
+          console.error(
+            `Error: Image with name ${currentFileName} already exists in ${DEFAULT_RESULT_FILE_NAME}  \n`,
+            `duplicated path: ${currentFilePath} and ${imageInfo[currentFileName].original}`,
+          );
+          process.exit(1);
+        } else {
+          callback(null, fileBuffer);
+        }
       } else {
+        await processImage(
+          fileBuffer,
+          imageInfo,
+          currentFilePath,
+          processImageOptions,
+        );
+
+        await saveResultToFile(imageInfo, resultFilePath);
+
         callback(null, fileBuffer);
       }
-    } else {
-      await processImage(
-        fileBuffer,
-        imageInfo,
-        currentFilePath,
-        processImageOptions,
-      );
-
-      saveResultToFile(imageInfo, resultFilePath);
-
-      callback(null, fileBuffer);
+    } finally {
+      await release();
     }
   } catch (e) {
     callback(e);
   }
-};
+}

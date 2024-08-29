@@ -1,9 +1,9 @@
-import fs from "fs";
+import fs from "fs/promises";
 import { ImageInfo } from "../../types/common";
 
-export const saveResultToFile = (
+export const saveResultToFile = async (
   imageInfo: ImageInfo,
   resultFilePath: string,
-) => {
-  fs.writeFileSync(resultFilePath, JSON.stringify(imageInfo));
+): Promise<void> => {
+  await fs.writeFile(resultFilePath, JSON.stringify(imageInfo, null, 2));
 };
