@@ -12,7 +12,7 @@ export const processImage = async (
   imageInfo: ImageInfo,
   currentFilePath: string,
   options: ProcessImageOptions,
-) => {
+): Promise<void> => {
   const fileSize = sizeOf(file);
   const currentFileName = getFileName(currentFilePath);
 
@@ -35,7 +35,7 @@ export const processImage = async (
             path.join("/optimized", fileSrc),
           );
 
-          return new Promise<void>((resolve) => {
+          return new Promise<void>((resolve, reject) => {
             if (isResizingNeeded && !options.validationOnly) {
               sharp(file)
                 .resize(breakpointWidth)
@@ -48,7 +48,7 @@ export const processImage = async (
                   (err) => {
                     if (err) {
                       console.log(err);
-                      throw err;
+                      reject(err);
                     } else {
                       console.log(
                         `Resized image to ${breakpointWidth} for ${currentFileName}`,
@@ -58,9 +58,9 @@ export const processImage = async (
                     }
                   },
                 );
+            } else {
+              resolve();
             }
-
-            resolve();
           });
         },
       ),
